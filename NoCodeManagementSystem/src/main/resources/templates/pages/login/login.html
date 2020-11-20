@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>用户登录</title>
+<link rel="stylesheet" href="../../css/pageAll.css" />
+<script src="../../js/pageAll.js"></script>
+
+</head>
+<body style="background-image: url(../../img/bg1.jpg);">
+	<div id="login">
+		<div class="mid_box">
+			<div class="mid_left_box">
+				<!-- 					<img src="../../img/head.jpg" /> -->
+			</div>
+			<div class="mid_right_box">
+				<div class="title">欢迎登录使用</div>
+				<el-form :model="ruleForm" :rules="rules" ref="ruleForm"
+					class="ruleForm" status-icon> <el-form-item prop="name">
+				<el-input v-model="ruleForm.name" placeholder="请输入用户名"></el-input> </el-form-item>
+				<el-form-item prop="passWord"> <el-input
+					v-model="ruleForm.passWord" type="password" placeholder="请输入密码"
+					@keyup.enter.native="submitForm('ruleForm')"></el-input> </el-form-item> <el-form-item>
+				<el-button type="primary" class="login_btn"
+					@click="submitForm('ruleForm')">登录</el-button> </el-form-item> </el-form>
+				<div class="register">
+					<a href="/login/reg">前往注册</a>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</body>
+<script type="text/javascript"> 
+
+var vm = new Vue({
+	el: '#login',
+//		data:getAjax("getLogin"),
+	data() {
+		return {
+			ruleForm: {
+				name: '',
+				passWord: ''
+			},
+			rules: {
+				name: {
+					required: true,
+					message: '请输入用户名',
+					trigger: 'blur'
+				},
+				passWord: {
+					required: true,
+					message: '请输入密码',
+					trigger: 'blur'
+				},
+			},
+
+		}
+	},
+	methods: {
+		submitForm(formName) {
+			
+			this.$refs[formName].validate((valid) => {
+				
+				if (valid) {
+						axios.post("/login/loginUser", this.ruleForm).then((res) => {
+				 
+							this.$alert(res.data.meassage, '提示', {
+							    confirmButtonText: '确定',
+							    callback: action => {
+							    	if(res.data.statusCode == 200){		    		
+							    		sessionStorage.setItem("token",res.data.token)
+ 
+										goUrl('/index')
+							    	}
+							    }
+							});	
+							
+							
+							
+						})
+ 
+				
+				} else {
+					console.log('error submit!!');
+					return false;
+				}
+			});
+		},
+	}
+})
+ </script>
+</html>
